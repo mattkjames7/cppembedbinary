@@ -16,6 +16,13 @@ else
 	USELD=true
 endif
 
+# rm or del
+ifeq ($(OS),Windows_NT)
+	RM=del
+else
+	RM=rm -v
+endif
+
 all: writebin data readbin
 
 
@@ -30,7 +37,11 @@ ifeq ($(USELD),false)
 	touch data.h
 else
 	ld -r -b binary data.bin -o data.o
+ifeq ($(OS),Windows_NT)
+	echo #define DATAFMTLD > data.h
+else
 	echo '#define DATAFMTLD' > data.h
+endif
 endif
 	objdump -t data.o
 
@@ -39,9 +50,9 @@ readbin:
 	./readbin
 
 clean:
-	-rm -v writebin
-	-rm -v data.bin
-	-rm -v data.o
-	-rm -v readbin
-	-rm -v data.h
-	-rm -v data.cc
+	-$(RM) writebin
+	-$(RM) data.bin
+	-$(RM) data.o
+	-$(RM) readbin
+	-$(RM) data.h
+	-$(RM) data.cc
