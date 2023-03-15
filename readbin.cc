@@ -1,9 +1,19 @@
 #include <iostream>
 #include <fstream>
+#include "data.h"
 
-extern unsigned char _binary_data_bin_start[];
-extern unsigned char _binary_data_bin_size;
-extern unsigned char _binary_data_bin_end[];
+#ifdef DATAFMTLD
+    extern unsigned char _binary_data_bin_start[];
+    extern unsigned char _binary_data_bin_size;
+    extern unsigned char _binary_data_bin_end[];
+    unsigned char *data_start = _binary_data_bin_start;
+    const char *datastr = "using ld to store binary data";
+#else
+    extern unsigned char data_bin[];
+    extern unsigned char data_bin_len; 
+    unsigned char *data_start = data_bin; 
+    const char *datastr = "using xxd to store binary data";
+#endif
 
 int main() {
 
@@ -14,7 +24,7 @@ int main() {
     int n, *dat;
 
     /* read in the number of  elements, then advance the pointer*/
-    p = _binary_data_bin_start;
+    p = data_start;
     n = ((int*) p)[0];
     p += sizeof(int);
 
@@ -29,7 +39,7 @@ int main() {
     }
 
     /* print the output */
-    std::cout << "Printing data stored in memory" << std::endl;
+    std::cout << "Printing data stored in memory (" << datastr << ")" << std::endl;
     for (i=0;i<n;i++) {
         std::cout << i << ": " << dat[i] << std::endl;
     }
